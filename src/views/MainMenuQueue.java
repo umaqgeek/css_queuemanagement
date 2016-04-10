@@ -1247,11 +1247,11 @@ public class MainMenuQueue extends javax.swing.JFrame {
         String quota = quota_temp + "";
 
         String sql = "UPDATE pms_queue_name "
-        + "SET queue_description = '"+queue_desc+"', "
-        + "user_id = '"+user_id+"', "
-        + "quota = '"+quota+"' "
-        + "WHERE queue_type = '"+queue_type+"' "
-        + "AND queue_name = '"+queue_name+"' ";
+            + "SET queue_description = '"+queue_desc+"', "
+            + "user_id = '"+user_id+"', "
+            + "quota = '"+quota+"' "
+            + "WHERE queue_type = '"+queue_type+"' "
+            + "AND queue_name = '"+queue_name+"' ";
         DBConnQueue dbc = new DBConnQueue();
         boolean isUpdate = dbc.setQuery(sql);
 
@@ -1356,19 +1356,109 @@ public class MainMenuQueue extends javax.swing.JFrame {
 
     private void jButton11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton11ActionPerformed
         // TODO add your handling code here:
+        try {
+            
+            PMS_Queue_Name_Bean pqnb = (PMS_Queue_Name_Bean) cbx_queuename.getSelectedItem();
+            String queue_type = pqnb.getQueue_type();
+            String queue_name = pqnb.getQueue_name();
+
+            Adm_user_bean aub = (Adm_user_bean) cbx_staffassigned.getSelectedItem();
+            String user_id = aub.getUser_id();
+            
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            Date start_date_temp = dc_startdate.getDate();
+            Date end_date_temp = dc_enddate.getDate();
+            String start_date = sdf.format(start_date_temp);
+            String end_date = sdf.format(end_date_temp);
+            String hfc = txt_hfc.getText();
+            String dis = txt_discipline.getText();
+            String subdis = txt_subdiscipline.getText();
+            String status = cbx_status2.getSelectedItem().toString();
+            
+            String sql = "UPDATE pms_queue_list "
+                    + "SET start_date = '" + start_date + "', "
+                    + "end_date = '" + end_date + "', "
+                    + "hfc_cd = '" + hfc + "', "
+                    + "discipline_cd = '" + dis + "', "
+                    + "sub_discipline_cd = '" + subdis + "', "
+                    + "status = '" + status + "' "
+                    + "WHERE queue_type = '" + queue_type + "' "
+                    + "AND queue_name = '" + queue_name + "' "
+                    + "AND user_id = '" + user_id + "' ";
+            DBConnQueue dbc = new DBConnQueue();
+            boolean isUpdate = dbc.setQuery(sql);
+
+            if (isUpdate) {
+                J.o("Success", "Update Success.", 1);
+                setList3();
+            } else {
+                J.o("Failed", "Update Failed!", 0);
+            }
+            
+        } catch (Exception e) {
+            J.o("Error", "Error: "+e.getMessage(), 0);
+        }
     }//GEN-LAST:event_jButton11ActionPerformed
 
     private void jButton12ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton12ActionPerformed
         // TODO add your handling code here:
+        try {
+            
+            PMS_Queue_Name_Bean pqnb = (PMS_Queue_Name_Bean) cbx_queuename.getSelectedItem();
+            String queue_type = pqnb.getQueue_type();
+            String queue_name = pqnb.getQueue_name();
+            
+            Adm_user_bean aub = (Adm_user_bean) cbx_staffassigned.getSelectedItem();
+            String user_id = aub.getUser_id();
+            
+            String sql = "DELETE FROM pms_queue_list "
+                    + "WHERE queue_type = '" + queue_type + "' "
+                    + "AND queue_name = '" + queue_name + "' "
+                    + "AND user_id = '" + user_id + "' ";
+            DBConnQueue dbc = new DBConnQueue();
+            boolean isDelete = dbc.setQuery(sql);
+
+            if (isDelete) {
+                J.o("Success", "Delete Success.", 1);
+                setList3();
+            } else {
+                J.o("Failed", "Delete Failed!", 0);
+            }
+            
+        } catch (Exception e) {
+            J.o("Error", "Error: "+e.getMessage(), 0);
+        }
     }//GEN-LAST:event_jButton12ActionPerformed
 
     private void tbl_qt2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbl_qt2MouseClicked
         // TODO add your handling code here:
-        int index = tbl_qt2.getSelectedRow();
-        ArrayList<String> data = data3.get(index);
-        
-        String queue_name = "(" + data.get(0) + ") " + data.get(1);
-        Func.cmbSelectInput(cbx_queuename, queue_name, false);
+        try {
+            int index = tbl_qt2.getSelectedRow();
+            ArrayList<String> data = data3.get(index);
+
+            txt_hfc.setText(data.get(5));
+            txt_discipline.setText(data.get(6));
+            txt_subdiscipline.setText(data.get(7));
+
+            String queue_name = "(" + data.get(0) + ") " + data.get(1);
+            Func.cmbSelectInput(cbx_queuename, queue_name, false);
+
+            String staff_assigned = "(" + data.get(9) + ") " + data.get(12);
+            Func.cmbSelectInput(cbx_staffassigned, staff_assigned, false);
+
+            Func.cmbSelectInput(cbx_status2, data.get(8), false);
+
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String startDate = data.get(3);
+            String endDate = data.get(4);
+            Date start_date = formatter.parse(startDate);
+            Date end_date = formatter.parse(endDate);
+            dc_startdate.setDate(start_date);
+            dc_enddate.setDate(end_date);
+            
+        } catch (Exception e) {
+            J.o("Error", "Error: "+e.getMessage(), 0);
+        }
     }//GEN-LAST:event_tbl_qt2MouseClicked
 
     private void cbx_staffassignedItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbx_staffassignedItemStateChanged
