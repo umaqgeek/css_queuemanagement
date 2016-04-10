@@ -7,7 +7,9 @@ package views;
 
 import helper.J;
 import helpers.Func;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import models.Adm_user_bean;
 import models.DBConnQueue;
 import models.PMS_Queue_Name_Bean;
@@ -22,6 +24,8 @@ public class MainMenuQueue extends javax.swing.JFrame {
     private static int limit = 100;
     private static int cols1 = 3;
     private static int cols2 = 5;
+    private static int cols3 = 8;
+    private static ArrayList<ArrayList<String>> data3 = new ArrayList<ArrayList<String>>();
     
     /**
      * Creates new form MainMenuQueue
@@ -37,6 +41,7 @@ public class MainMenuQueue extends javax.swing.JFrame {
         setList2();
         
         setComboList2();
+        setList3();
     }
     
     private static void setComboList2() {
@@ -63,8 +68,10 @@ public class MainMenuQueue extends javax.swing.JFrame {
         }
         cbx_queuename.setSelectedIndex(0);
         
-        String sql2 = "SELECT * "
-                + "FROM adm_user ";
+        String sql2 = "SELECT au.user_id, au.health_facility_code, "
+                + "au.user_name, aua.discipline_code, aua.subdiscipline_code "
+                + "FROM adm_user au, adm_user_access aua "
+                + "WHERE au.user_id = aua.user_id ";
         DBConnQueue dbc2 = new DBConnQueue();
         ArrayList<ArrayList<String>> data2 = dbc2.getQuery(sql2);
         
@@ -73,7 +80,9 @@ public class MainMenuQueue extends javax.swing.JFrame {
             Adm_user_bean au = new Adm_user_bean();
             au.setUser_id(data2.get(i).get(0));
             au.setHealth_facility_code(data2.get(i).get(1));
-            au.setUser_name(data2.get(i).get(3));
+            au.setUser_name(data2.get(i).get(2));
+            au.setDiscipline(data2.get(i).get(3));
+            au.setSubdiscipline(data2.get(i).get(4));
             cbx_staffassigned.addItem(au);
         }
         cbx_staffassigned.setSelectedIndex(0);
@@ -163,6 +172,43 @@ public class MainMenuQueue extends javax.swing.JFrame {
             tbl_qt1.setValueAt(data.get(i).get(4), i, 4);
         }
     }
+            
+    private static void setList3() {
+        
+        txt_hfc.setText("");
+        txt_discipline.setText("");
+        txt_subdiscipline.setText("");
+        cbx_queuename.setSelectedIndex(0);
+        cbx_staffassigned.setSelectedIndex(0);
+        cbx_status2.setSelectedIndex(0);
+        Date date = new Date();
+        dc_startdate.setDate(date);
+        dc_enddate.setDate(date);
+        
+        for (int i = 0; i < limit; i++) {
+            for (int j = 0; j < cols3; j++) {
+                tbl_qt2.setValueAt("", i, j);
+            }
+        }
+        
+        String sql = "SELECT * "
+                + "FROM pms_queue_list pql, adm_user au "
+                + "WHERE pql.user_id = au.user_id ";
+        DBConnQueue dbc = new DBConnQueue();
+        data3.clear();
+        data3 = dbc.getQuery(sql);
+        
+        for (int i = 0; i < limit && i < data3.size(); i++) {
+            tbl_qt2.setValueAt(data3.get(i).get(1), i, 0);
+            tbl_qt2.setValueAt(data3.get(i).get(12), i, 1);
+            tbl_qt2.setValueAt(data3.get(i).get(5), i, 2);
+            tbl_qt2.setValueAt(data3.get(i).get(6), i, 3);
+            tbl_qt2.setValueAt(data3.get(i).get(7), i, 4);
+            tbl_qt2.setValueAt(data3.get(i).get(3), i, 5);
+            tbl_qt2.setValueAt(data3.get(i).get(4), i, 6);
+            tbl_qt2.setValueAt(data3.get(i).get(8), i, 7);
+        }
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -226,6 +272,10 @@ public class MainMenuQueue extends javax.swing.JFrame {
         jButton12 = new javax.swing.JButton();
         jScrollPane3 = new javax.swing.JScrollPane();
         tbl_qt2 = new javax.swing.JTable();
+        jLabel16 = new javax.swing.JLabel();
+        txt_subdiscipline = new javax.swing.JTextField();
+        jLabel17 = new javax.swing.JLabel();
+        cbx_status2 = new javax.swing.JComboBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
 
@@ -418,7 +468,7 @@ public class MainMenuQueue extends javax.swing.JFrame {
                             .addComponent(jLabel1)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                             .addComponent(txt_qtc, javax.swing.GroupLayout.PREFERRED_SIZE, 197, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(359, Short.MAX_VALUE))
+                .addContainerGap(541, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -443,7 +493,7 @@ public class MainMenuQueue extends javax.swing.JFrame {
                     .addComponent(jButton4))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(160, Short.MAX_VALUE))
+                .addContainerGap(232, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Maintain Queue Type", jPanel1);
@@ -666,7 +716,7 @@ public class MainMenuQueue extends javax.swing.JFrame {
                             .addComponent(txt_quota, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(cbx_status1, javax.swing.GroupLayout.PREFERRED_SIZE, 197, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 707, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(154, Short.MAX_VALUE))
+                .addContainerGap(336, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -723,8 +773,22 @@ public class MainMenuQueue extends javax.swing.JFrame {
         jLabel15.setText("End date : ");
 
         cbx_queuename.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cbx_queuename.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                cbx_queuenameItemStateChanged(evt);
+            }
+        });
 
         cbx_staffassigned.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cbx_staffassigned.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                cbx_staffassignedItemStateChanged(evt);
+            }
+        });
+
+        txt_hfc.setEditable(false);
+
+        txt_discipline.setEditable(false);
 
         dc_startdate.setDateFormatString("yyyy-MM-dd");
 
@@ -760,113 +824,113 @@ public class MainMenuQueue extends javax.swing.JFrame {
 
         tbl_qt2.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null}
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Queue Type Name", "Staff Name", "Health Facility", "Discipline", "Start Date", "End Date"
+                "Queue Name", "Staff Name", "Health Facility", "Discipline", "Sub-Discipline", "Start Date", "End Date", "Status"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false
+                false, false, false, false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -879,6 +943,14 @@ public class MainMenuQueue extends javax.swing.JFrame {
             }
         });
         jScrollPane3.setViewportView(tbl_qt2);
+
+        jLabel16.setText("Sub-Discipline : ");
+
+        txt_subdiscipline.setEditable(false);
+
+        jLabel17.setText("Status : ");
+
+        cbx_status2.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Active", "Inactive" }));
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -902,23 +974,26 @@ public class MainMenuQueue extends javax.swing.JFrame {
                             .addComponent(jLabel13)
                             .addComponent(jLabel12)
                             .addComponent(jLabel11)
-                            .addComponent(jLabel10))
+                            .addComponent(jLabel10)
+                            .addComponent(jLabel16)
+                            .addComponent(jLabel17))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(cbx_queuename, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(cbx_staffassigned, 0, 245, Short.MAX_VALUE)
-                                .addComponent(txt_hfc)
-                                .addComponent(txt_discipline))
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(cbx_queuename, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(cbx_staffassigned, 0, 245, Short.MAX_VALUE)
+                            .addComponent(txt_hfc)
+                            .addComponent(txt_discipline)
                             .addComponent(dc_startdate, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(dc_enddate, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 814, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(39, Short.MAX_VALUE))
+                            .addComponent(dc_enddate, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txt_subdiscipline)
+                            .addComponent(cbx_status2, javax.swing.GroupLayout.PREFERRED_SIZE, 197, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 990, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(33, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
-                .addGap(43, 43, 43)
+                .addGap(15, 15, 15)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel10)
                     .addComponent(cbx_queuename, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -935,6 +1010,10 @@ public class MainMenuQueue extends javax.swing.JFrame {
                     .addComponent(txt_discipline, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel13))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txt_subdiscipline, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel16))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(dc_startdate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel14, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -942,22 +1021,29 @@ public class MainMenuQueue extends javax.swing.JFrame {
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(dc_enddate, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(31, 31, 31)
+                .addGap(3, 3, 3)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel17, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cbx_status2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton10)
                     .addComponent(jButton11)
                     .addComponent(jButton12)
                     .addComponent(jButton9))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(39, 39, 39))
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 197, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(15, 15, 15))
         );
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -977,9 +1063,7 @@ public class MainMenuQueue extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 554, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+            .addComponent(jTabbedPane1)
         );
 
         pack();
@@ -1232,6 +1316,42 @@ public class MainMenuQueue extends javax.swing.JFrame {
 
     private void jButton10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton10ActionPerformed
         // TODO add your handling code here:
+        try {
+            PMS_Queue_Name_Bean pqnb = (PMS_Queue_Name_Bean) cbx_queuename.getSelectedItem();
+            Adm_user_bean aub = (Adm_user_bean) cbx_staffassigned.getSelectedItem();
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            Date start_date_temp = dc_startdate.getDate();
+            Date end_date_temp = dc_enddate.getDate();
+            
+            String queue_type = pqnb.getQueue_type();
+            String queue_name = pqnb.getQueue_name();
+            String user_id = aub.getUser_id();
+            String start_date = sdf.format(start_date_temp);
+            String end_date = sdf.format(end_date_temp);
+            String hfc = txt_hfc.getText();
+            String dis = txt_discipline.getText();
+            String subdis = txt_subdiscipline.getText();
+            String status = cbx_status2.getSelectedItem().toString();
+
+            String sql = "INSERT INTO pms_queue_list(queue_type, queue_name, "
+                    + "user_id, start_date, end_date, hfc_cd, discipline_cd, "
+                    + "sub_discipline_cd, status) "
+                    + "VALUES('" + queue_type + "', '" + queue_name + "', '" + user_id + "', "
+                    + "'" + start_date + "', '" + end_date + "', '" + hfc + "', "
+                    + "'" + dis + "', '" + subdis + "', '" + status + "') ";
+            DBConnQueue dbc = new DBConnQueue();
+            boolean isAdd = dbc.setQuery(sql);
+
+            if (isAdd) {
+                J.o("Success", "Add Success.", 1);
+                setList3();
+            } else {
+                J.o("Failed", "Add Failed!", 0);
+            }
+            
+        } catch (Exception e) {
+            J.o("Error", "Error: "+e.getMessage(), 0);
+        }
     }//GEN-LAST:event_jButton10ActionPerformed
 
     private void jButton11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton11ActionPerformed
@@ -1244,7 +1364,40 @@ public class MainMenuQueue extends javax.swing.JFrame {
 
     private void tbl_qt2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbl_qt2MouseClicked
         // TODO add your handling code here:
+        int index = tbl_qt2.getSelectedRow();
+        ArrayList<String> data = data3.get(index);
+        
+        String queue_name = "(" + data.get(0) + ") " + data.get(1);
+        Func.cmbSelectInput(cbx_queuename, queue_name, false);
     }//GEN-LAST:event_tbl_qt2MouseClicked
+
+    private void cbx_staffassignedItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbx_staffassignedItemStateChanged
+        // TODO add your handling code here:
+        Adm_user_bean aub = (Adm_user_bean) cbx_staffassigned.getSelectedItem();
+        try {
+            txt_hfc.setText(aub.getHealth_facility_code());
+            txt_discipline.setText(aub.getDiscipline());
+            txt_subdiscipline.setText(aub.getSubdiscipline());
+        } catch (Exception e) {
+            txt_hfc.setText("");
+            txt_discipline.setText("");
+        }
+    }//GEN-LAST:event_cbx_staffassignedItemStateChanged
+
+    private void cbx_queuenameItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbx_queuenameItemStateChanged
+        // TODO add your handling code here:
+        PMS_Queue_Name_Bean pqnb = (PMS_Queue_Name_Bean) cbx_queuename.getSelectedItem();
+        try {
+            String queue_type = pqnb.getQueue_type();
+            
+            if (queue_type.toUpperCase().equals("PN".toUpperCase())) {
+                String user_id = pqnb.getUser_id();
+                Func.cmbSelectInput(cbx_staffassigned, user_id, true);
+            }
+            
+        } catch (Exception e) {
+        }
+    }//GEN-LAST:event_cbx_queuenameItemStateChanged
 
     /**
      * @param args the command line arguments
@@ -1287,6 +1440,7 @@ public class MainMenuQueue extends javax.swing.JFrame {
     protected static javax.swing.JComboBox cbx_staffassigned;
     protected static javax.swing.JComboBox cbx_status;
     protected static javax.swing.JComboBox cbx_status1;
+    protected static javax.swing.JComboBox cbx_status2;
     protected static javax.swing.JComboBox cbx_userid;
     protected static com.toedter.calendar.JDateChooser dc_enddate;
     protected static com.toedter.calendar.JDateChooser dc_startdate;
@@ -1309,6 +1463,8 @@ public class MainMenuQueue extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
+    private javax.swing.JLabel jLabel16;
+    private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -1335,5 +1491,6 @@ public class MainMenuQueue extends javax.swing.JFrame {
     protected static javax.swing.JTextField txt_qtc;
     protected static javax.swing.JTextField txt_qtd;
     protected static javax.swing.JTextField txt_quota;
+    protected static javax.swing.JTextField txt_subdiscipline;
     // End of variables declaration//GEN-END:variables
 }

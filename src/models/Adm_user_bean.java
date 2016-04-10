@@ -14,6 +14,8 @@ public class Adm_user_bean {
     private String user_id;
     private String user_name;
     private String health_facility_code;
+    private String discipline;
+    private String subdiscipline;
     
     public String toString() {
         return "("+user_id+") "+user_name;
@@ -41,5 +43,21 @@ public class Adm_user_bean {
 
     public void setHealth_facility_code(String health_facility_code) {
         this.health_facility_code = health_facility_code;
+    }
+
+    public String getDiscipline() {
+        return discipline;
+    }
+
+    public void setDiscipline(String discipline) {
+        this.discipline = discipline;
+    }
+
+    public String getSubdiscipline() {
+        return subdiscipline;
+    }
+
+    public void setSubdiscipline(String subdiscipline) {
+        this.subdiscipline = subdiscipline;
     }
 }
